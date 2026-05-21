@@ -23,11 +23,9 @@ const Bienvenida = () => {
   };
 
   const dormirTuke = () => {
-    fetch('http://localhost:5005/hablar', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mensaje: "¡Me voy a descansar! Adiós." })
-    });
+    // Apuntamos a la nueva ruta /dormir
+    fetch('http://localhost:5005/dormir', { method: 'POST' })
+      .catch(err => console.error("Error al intentar dormir a Tuke:", err));
   };
 
   const hablarConTuke = (e) => {
