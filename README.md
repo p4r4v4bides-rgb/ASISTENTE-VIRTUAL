@@ -18,7 +18,7 @@ venv\Scripts\activate
 
 pip install -r requirements.txt
 
-Paso 3:
+Paso 3: Crear Usuario de Admin para la base de datos
 
 python manage.py migrate
 
