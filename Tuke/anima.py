@@ -139,7 +139,7 @@ class animalitoApp(QWidget):
             "Oye, abre tus ojos, mira hacia arriba, disfruta las cosas buenas que tiene la vida",
             "Creo en mí, en lo que puedo hacer, no hay nada que me dé más fuerza",
             "Los mejores mundiales, con las mejores canciones de mundiales, 2010, 2014, el resto meh",
-            "Más allá de no sé donde, tampoco se sabe cuándo, dicen que sale un espanto, que lo vieron no se sabe, ni dónde, ni cómo, ni cuandoni por qué andaba espantando",
+            "Más allá de no sé donde, tampoco se sabe cuándo, dicen que sale un espanto, que lo vieron no se sabe, ni dónde, ni cómo, ni cuando, ni por qué andaba espantando",
             "Eres más fuerte de lo que piensas",
             "Los huesos de los tukekes, brillan en luz ultra violeta",
             "Quiero una double cheese & bacon",
