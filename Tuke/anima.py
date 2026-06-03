@@ -323,7 +323,8 @@ class animalitoApp(QWidget):
         self.timer_animacion.setInterval(250) 
         frase_elegida = random.choice(self.frases)
         self.burbuja.mostrar_mensaje(frase_elegida, self.pos_x, self.pos_y, self.width(), self.height())
-        self.timer_habla.start(3500) 
+        tiempo_lectura = max(4500, len(frase_elegida) * 100) 
+        self.timer_habla.start(int(tiempo_lectura))
 
     def terminar_hablar(self):
         self.burbuja.hide() 
