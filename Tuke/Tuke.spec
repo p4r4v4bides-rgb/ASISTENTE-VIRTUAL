@@ -5,7 +5,7 @@ a = Analysis(
     ['anima.py'],
     pathex=[],
     binaries=[],
-    datas=[('imagen', 'imagen'), ('icono.ico', '.')],
+    datas=[],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Login } from "./API";
 import { useForm } from "react-hook-form";
@@ -13,7 +12,18 @@ const Logi = ({ setAx, ax }) => {
     // Función interna para manejar la promesa del toast
     const ejecutarLogin = async () => {
       try {
-        await Login(data);
+        // 1. ATRAPAMOS LA RESPUESTA DE LA API
+        const respuesta = await Login(data);
+        
+        // 2. BUSCAMOS EL ID DEL USUARIO 
+        // (Soporta axios o fetch dependiendo de cómo armaste API.js)
+        const idUsuario = respuesta?.data?.usuario_id || respuesta?.usuario_id;
+
+        // 3. SI EXISTE, LO GUARDAMOS EN LA MEMORIA DEL NAVEGADOR
+        if (idUsuario) {
+          localStorage.setItem("usuario_id", idUsuario);
+        }
+
         // Si el backend de Django responde OK, navegamos a bienvenida
         navigate("/bienvenida");
       } catch (e) {

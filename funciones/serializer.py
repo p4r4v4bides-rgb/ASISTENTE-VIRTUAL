@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import funciones,Usuarios
+from .models import funciones,Usuarios, MensajeChat
 
 class funcionesSerializer(serializers.ModelSerializer):
     
@@ -13,3 +13,8 @@ class UsuariosSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuarios
         fields = '__all__'
+
+class MensajeChatSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MensajeChat
+        fields = ['emisor', 'texto', 'fecha']

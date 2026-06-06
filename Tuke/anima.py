@@ -15,7 +15,8 @@ def ruta_recurso(ruta_relativa):
 
 from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QSystemTrayIcon, QMenu
 from PyQt6.QtGui import QPixmap, QTransform, QIcon, QAction
-from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QObject 
+from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QObject, QUrl 
+from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput 
 from flask import Flask, request
 from flask_cors import CORS
 
@@ -103,13 +104,13 @@ class animalitoApp(QWidget):
         super().__init__()
         self.burbuja = BurbujaTexto()
         self.frases = [
+            "«tchi-tchi-tchi», «que-que-que» o «ck-ck-ck»",
             "¡Hola! ¿Qué investigamos hoy?",
             "Recuerda tomar un poco de agua",
             "Tengo los ojos en tus tareas...",
             "Me pregunto de qué color me pondré hoy",
             "Sigue así, vas por buen camino",
             "Shhh... estoy concentrado",
-            "«tchi-tchi-tchi», «que-que-que» o «ck-ck-ck»",
             "E=mc², pero yo soy más de E=tuKe²",
             "Animo, animo, animo, animo, a-animo, a-animo, animo, animo, a-animo, a-animo, animo...",
             "En ocaciones, checa mi mookwalk",
@@ -145,8 +146,15 @@ class animalitoApp(QWidget):
             "Quiero una double cheese & bacon",
             "To think about the girl you love and hold her tight, So happy together",
             "He-he"
+            
         ]
         self.hablando = False 
+
+        self.reproductor = QMediaPlayer()
+        self.salida_audio = QAudioOutput()
+        self.reproductor.setAudioOutput(self.salida_audio)
+        self.salida_audio.setVolume(1.0) # Volumen al 100%
+
         self.inicializarUI()
         self.configurar_bandeja()
         
@@ -179,6 +187,15 @@ class animalitoApp(QWidget):
 
     def saludar_llegada(self):
         self.decir_mensaje_custom("¡Zzz... Ah! ¡Hola! Ya estoy aquí.")
+    
+    def verificar_sonido(self, texto):
+        texto_min = texto.lower()
+        # Si encuentra alguna de las onomatopeyas en el texto, reproduce el audio
+        if "tchi-tchi-tchi" in texto_min or "que-que-que" in texto_min or "ck-ck-ck" in texto_min:
+            # Asegúrate de que el archivo 'onomatopeya.m4a' esté en la misma carpeta que tu script
+            ruta_audio = ruta_recurso("extras/onomatopeya.m4a") 
+            self.reproductor.setSource(QUrl.fileURLWithPath(ruta_audio))
+            self.reproductor.play()
 
     def decir_mensaje_custom(self, texto):
         self.hablando = True
@@ -223,10 +240,10 @@ class animalitoApp(QWidget):
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         nombres_archivos = [
-        ruta_recurso("imagen/paso_adelante.png"),
-        ruta_recurso("imagen/paso_quieto.png"),
-        ruta_recurso("imagen/paso_atras.png"),
-        ruta_recurso("imagen/paso_quieto.png")
+        ruta_recurso("extras/paso_adelante.png"),
+        ruta_recurso("extras/paso_quieto.png"),
+        ruta_recurso("extras/paso_atras.png"),
+        ruta_recurso("extras/paso_quieto.png")
         ]
         
         self.frames_base = [] 
@@ -267,7 +284,7 @@ class animalitoApp(QWidget):
 
     def configurar_bandeja(self):
         self.tray_icon = QSystemTrayIcon(self)
-        ruta_icono = ruta_recurso("icono.ico") 
+        ruta_icono = ruta_recurso("extras/icono.ico") 
         self.tray_icon.setIcon(QIcon(ruta_icono))
 
         tray_menu = QMenu()
@@ -441,6 +458,20 @@ def limpiar_procesos():
             subprocess.call(['taskkill', '/F', '/T', '/PID', str(proceso_frontend.pid)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         except Exception:
             pass
+def iniciar_habla(self):
+        self.hablando = True
+        self.vel_x = 0
+        self.vel_y = 0
+        self.timer_decision.stop() 
+        self.timer_animacion.setInterval(250) 
+        
+        frase_elegida = random.choice(self.frases)
+        
+        self.verificar_sonido(frase_elegida) # <-- AÑADIMOS EL DETECTOR AQUÍ
+        
+        self.burbuja.mostrar_mensaje(frase_elegida, self.pos_x, self.pos_y, self.width(), self.height())
+        tiempo_lectura = max(4500, len(frase_elegida) * 100) 
+        self.timer_habla.start(int(tiempo_lectura))
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

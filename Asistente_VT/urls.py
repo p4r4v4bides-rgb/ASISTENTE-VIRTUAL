@@ -16,8 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path , include
+from funciones import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('funciones/', include('funciones.urls'))
+    path('funciones/', include('funciones.urls')),
+    path('api/chat/', views.procesar_chat, name='procesar_chat'),
+    path('api/historial/<int:usuario_id>/', views.obtener_historial),
+    path('api/tareas/', views.manejar_tareas, name='manejar_tareas'),
+    path('api/tareas/<int:tarea_id>/', views.detalle_tarea, name='detalle_tarea'),
 ]
