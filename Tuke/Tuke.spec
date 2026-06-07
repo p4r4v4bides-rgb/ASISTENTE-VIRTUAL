@@ -5,7 +5,7 @@ a = Analysis(
     ['anima.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[('extras', 'extras')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
