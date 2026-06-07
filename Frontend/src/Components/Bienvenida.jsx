@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 
 const Bienvenida = () => {
+  // HOOKS DE ESTADO (Chat)
   const [mensaje, setMensaje] = useState("");
   const [cargando, setCargando] = useState(false);
   const [historial, setHistorial] = useState([]); 
 
-  // estado, Tareas
+  // HOOKS DE ESTADO (Tareas)
   const [tareas, setTareas] = useState([]);
   const [mostrarFormTarea, setMostrarFormTarea] = useState(false);
   const [tituloTarea, setTituloTarea] = useState("");
@@ -73,7 +74,7 @@ const Bienvenida = () => {
     );
   }
 
-  // controles
+  // Controles del Asistente
   const despertarTuke = () => { fetch('http://localhost:5005/despertar', { method: 'POST' }).catch(console.error); };
   const dormirTuke = () => { fetch('http://localhost:5005/dormir', { method: 'POST' }).catch(console.error); };
   
@@ -82,7 +83,7 @@ const Bienvenida = () => {
     window.location.href = "/";
   };
 
-  // Tareas, limpiar formulario
+  // Tareas: Limpiar Formulario
   const limpiarFormularioTarea = () => {
     setTituloTarea("");
     setFechaTarea("");
@@ -91,7 +92,7 @@ const Bienvenida = () => {
     setMostrarFormTarea(false);
   };
 
-  // Iniciar Edicion
+  // Tareas: Iniciar Edición
   const iniciarEdicion = (tarea) => {
     setIdTareaEditando(tarea.id);
     setTituloTarea(tarea.titulo);
@@ -115,7 +116,7 @@ const Bienvenida = () => {
     }
   };
 
-  // guardar crear, editar
+  // Tareas: Guardar (Crear / Editar)
   const guardarTarea = async (e) => {
     e.preventDefault();
     if (!tituloTarea.trim() || !fechaTarea) {
@@ -161,7 +162,7 @@ const Bienvenida = () => {
     }
   };
 
-  // Logica del chat con Tuke
+  // Lógica del chat con Tuke
   const hablarConTuke = async (e) => {
     e.preventDefault();
     if (!mensaje.trim()) return;
@@ -200,33 +201,42 @@ const Bienvenida = () => {
     }
   };
 
-  // LOGICA DEL CALENDARIO
+  // ==========================================
+  // LÓGICA DEL CALENDARIO DINÁMICO
+  // ==========================================
   const mesActual = fechaCalendario.getMonth();
   const anioActual = fechaCalendario.getFullYear();
   
+  // Días que tiene el mes (28, 29, 30, 31)
   const diasEnMes = new Date(anioActual, mesActual + 1, 0).getDate();
+  // Día de la semana en que empieza el mes (0 = Dom, 1 = Lun, etc.)
   const primerDiaMes = new Date(anioActual, mesActual, 1).getDay();
 
   const cambiarMes = (incremento) => {
     setFechaCalendario(new Date(anioActual, mesActual + incremento, 1));
   };
 
-  // Nombres de meses
+  // Nombres de meses para mostrar
   const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
 
   const renderizarDias = () => {
     const celdas = [];
     const hoy = new Date();
 
+    // Rellenamos los espacios vacíos antes del día 1
     for (let i = 0; i < primerDiaMes; i++) {
       celdas.push(<div key={`vacio-${i}`} className="p-1"></div>);
     }
 
+    // Dibujamos los días reales del mes
     for (let dia = 1; dia <= diasEnMes; dia++) {
+      // Formateamos la fecha a YYYY-MM-DD para compararla con las tareas de la BD
       const fechaStr = `${anioActual}-${String(mesActual + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
       
+      // Comprobamos si es "hoy"
       const esHoy = hoy.getDate() === dia && hoy.getMonth() === mesActual && hoy.getFullYear() === anioActual;
       
+      // Buscamos si hay alguna tarea en esta fecha exacta
       const tareasDelDia = tareas.filter(t => t.fecha === fechaStr);
       const tieneTareas = tareasDelDia.length > 0;
 
@@ -240,7 +250,7 @@ const Bienvenida = () => {
           `}
         >
           {dia}
-          {/*punto indicador de tareas */}
+          {/* Pequeño punto indicador si hay tareas */}
           {tieneTareas && !esHoy && (
             <span className="absolute bottom-1 w-1 h-1 bg-blue-600 rounded-full"></span>
           )}
@@ -253,7 +263,7 @@ const Bienvenida = () => {
 
   return (
     <div className="w-screen h-screen bg-slate-100 flex p-6 gap-6">
-      {/* CHAT */}
+      {/* SECCIÓN IZQUIERDA: CHAT */}
       <div className="flex-1 bg-white rounded-3xl shadow-xl flex flex-col overflow-hidden border border-lime-200">
         <div className="bg-lime-600 p-4 text-white font-bold text-center">Chat con Tuke</div>
         
@@ -284,7 +294,7 @@ const Bienvenida = () => {
         </form>
       </div>
 
-      {/* CONTROLES Y WIDGETS */}
+      {/* SECCIÓN DERECHA: CONTROLES Y WIDGETS */}
       <div className="w-80 flex flex-col gap-6">
         
         {/* PANEL DE CONTROL */}
@@ -297,10 +307,10 @@ const Bienvenida = () => {
           </div>
         </div>
 
-        {/* SECCION NOVEDADES / TAREAS */}
+        {/* SECCIÓN NOVEDADES / TAREAS */}
         <div className="flex-1 bg-white p-5 rounded-3xl shadow-lg border border-blue-100 overflow-y-auto flex flex-col min-h-0">
           <div className="flex justify-between items-center mb-2">
-            <h3 className="font-bold text-blue-800 italic">Novedades & Tareas</h3>
+            <h3 className="font-bold text-blue-800 italic">Novedades</h3>
             <button 
               onClick={() => {
                 if (mostrarFormTarea) limpiarFormularioTarea();
@@ -347,7 +357,7 @@ const Bienvenida = () => {
           </ul>
         </div>
 
-        {/* CALENDARIO DINAMICO */}
+        {/* CALENDARIO DINÁMICO */}
         <div className="bg-white p-5 rounded-3xl shadow-lg border border-purple-200 shrink-0 select-none">
           {/* Navegación del mes */}
           <div className="flex justify-between items-center mb-3 text-purple-900">
@@ -358,12 +368,12 @@ const Bienvenida = () => {
             <button onClick={() => cambiarMes(1)} className="hover:bg-purple-100 p-1 rounded-lg px-2 transition-colors font-bold">&gt;</button>
           </div>
           
-          {/* Cabecera dias */}
+          {/* Cabecera de los días */}
           <div className="grid grid-cols-7 text-center text-[10px] font-bold text-slate-400 mb-2">
             <div>Do</div><div>Lu</div><div>Ma</div><div>Mi</div><div>Ju</div><div>Vi</div><div>Sa</div>
           </div>
           
-          {/* Cuadrado fechas */}
+          {/* Cuadrícula de fechas */}
           <div className="grid grid-cols-7 gap-y-1 text-center">
             {renderizarDias()}
           </div>

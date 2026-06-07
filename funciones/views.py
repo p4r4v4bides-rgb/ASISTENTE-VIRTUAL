@@ -41,9 +41,12 @@ def obtener_historial(request, usuario_id):
     except Usuarios.DoesNotExist:
         return Response([])
 
+# ==========================================
+# NUEVA VISTA: MANEJO DE TAREAS
+# ==========================================
 @api_view(['POST', 'GET'])
 def manejar_tareas(request):
-    # crear tarea
+    # CASO POST: Crear una nueva tarea
     if request.method == 'POST':
         usuario_id = request.data.get('usuario_id')
         titulo = request.data.get('titulo')
@@ -61,7 +64,7 @@ def manejar_tareas(request):
 
         return Response({"message": "Tarea agregada con éxito", "id": nueva_tarea.id})
 
-    # tareas pendientes 
+    # CASO GET: Traer las tareas pendientes del usuario
     elif request.method == 'GET':
         usuario_id = request.query_params.get('usuario_id')
         usuario = get_object_or_404(Usuarios, id=usuario_id)
@@ -78,17 +81,18 @@ def manejar_tareas(request):
             })
         return Response(data)
     
+# Asegúrate de incluir 'PUT' y 'DELETE' en los métodos permitidos
 @api_view(['PUT', 'DELETE'])
 def detalle_tarea(request, tarea_id):
     # Buscamos la tarea por su ID único
     tarea = get_object_or_404(Tarea, id=tarea_id)
 
-    # Eliminar tarea
+    # CASO DELETE: Eliminar la tarea por completo
     if request.method == 'DELETE':
         tarea.delete()
         return Response({"message": "Tarea eliminada con éxito"})
 
-    # Modificar datos tarea
+    # CASO PUT: Modificar los datos de la tarea
     elif request.method == 'PUT':
         tarea.titulo = request.data.get('titulo', tarea.titulo)
         tarea.fecha_limite = request.data.get('fecha_limite', tarea.fecha_limite)
@@ -100,10 +104,10 @@ def detalle_tarea(request, tarea_id):
         tarea.save()
         
         return Response({"message": "Tarea actualizada con éxito"})
-
-# PROCESAMIENTO DE CHAT Y GEMINI
-
-genai.configure(api_key="INGRESA_TU_API_KEY_DE_GOOGLE_AQUI")  
+# ==========================================
+# VISTA: PROCESAMIENTO DE CHAT Y GEMINI
+# ==========================================
+genai.configure(api_key="GCP_API_KEY=ingresa_tu_clave_aqui") 
 modelo = genai.GenerativeModel('gemini-3.5-flash')
 
 @api_view(['POST'])
@@ -111,7 +115,7 @@ def procesar_chat(request):
     mensaje = request.data.get('mensaje', '').lower()
     usuario_id = request.data.get('usuario_id') 
 
-    # prueba de fallos
+    # --- SISTEMA A PRUEBA DE FALLOS PARA EL USUARIO ---
     try:
         usuario = Usuarios.objects.get(id=usuario_id)
     except Usuarios.DoesNotExist:
@@ -122,7 +126,7 @@ def procesar_chat(request):
     # Guardamos tu mensaje
     MensajeChat.objects.create(usuario=usuario, emisor="yo", texto=request.data.get('mensaje'))
 
-    # musica
+    # 1. INTERCEPTOR DE MÚSICA
     palabras_musica = ["reproduce", "pon música", "escuchar", "abre"]
     if any(palabra in mensaje for palabra in palabras_musica):
         busqueda = mensaje
@@ -149,20 +153,18 @@ def procesar_chat(request):
             MensajeChat.objects.create(usuario=usuario, emisor="tuke", texto=respuesta)
             return Response({"respuesta": respuesta, "accion": "abrir_musica", "plataforma": "opciones", "url_spotify": url_spotify, "url_youtube": url_youtube})
 
-    # chat normal
+    # 2. CHAT NORMAL (Cerebro Gemini)
     try:
         respuesta_ia = modelo.generate_content(mensaje)
         texto_tuke = respuesta_ia.text
         
         MensajeChat.objects.create(usuario=usuario, emisor="tuke", texto=texto_tuke)
+
         return Response({"respuesta": texto_tuke, "accion": "hablar"})
-        
     except Exception as e:
-        # Manejo de errores con estilo
-        print(f"=============================================")
-        print(f" TIPO DE ERROR: {type(e).__name__}")
-        print(f" DETALLE DEL ERROR: {e}") 
-        print(f"=============================================")
+        print(f"============== ERROR EN GEMINI ==============")
+        print(e)
+        print("=============================================")
         
         error_msg = "Mmm, tuve un cruce de cables. ¿Me repites?"
         MensajeChat.objects.create(usuario=usuario, emisor="tuke", texto=error_msg)

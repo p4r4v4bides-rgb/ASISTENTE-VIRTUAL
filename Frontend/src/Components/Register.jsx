@@ -9,13 +9,14 @@ const Register = ({ setAx, ax }) => {
   const onSubmit = handleSubmit((data) => {
     async function ejecutarRegistro() {
       try {
-        
+        // 1. Intentamos registrar al usuario
         await Registe(data);
         
+        // 2. ¡ÉXITO! Cambiamos el estado para volver al Login automáticamente
         setAx(!ax); 
 
       } catch (e) {
-        
+        // Si hay error, el toast lo capturará
         throw new Error(e);
       }
     }
@@ -31,7 +32,7 @@ const Register = ({ setAx, ax }) => {
     <div className="flex flex-col gap-6 w-full justify-center items-center">
       <form
         className="w-full px-20 flex flex-col gap-6"
-        onSubmit={onSubmit} 
+        onSubmit={onSubmit} // Usamos la función procesada directamente
       >
         <div className="flex flex-col">
           <p className="text-lime-600">Nombre completo</p>
