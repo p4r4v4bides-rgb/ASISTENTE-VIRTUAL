@@ -22,7 +22,7 @@ const Home = () => {
         </p>
       </div>
 
-      {/* Lógica de intercambio interna */}
+      {/* Logica de intercambio interna */}
       {ax ? (
         <Register setAx={setAx} ax={ax} />
       ) : (

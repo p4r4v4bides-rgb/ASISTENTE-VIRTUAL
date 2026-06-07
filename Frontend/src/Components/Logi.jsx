@@ -1,23 +1,29 @@
-
 import React from "react";
 import { Login } from "./API";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
-import { useNavigate } from "react-router-dom"; // Importante para saltar de página
+import { useNavigate } from "react-router-dom"; 
 
 const Logi = ({ setAx, ax }) => {
   const { register, handleSubmit } = useForm();
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
-    // Función interna para manejar la promesa del toast
+    
     const ejecutarLogin = async () => {
       try {
-        await Login(data);
-        // Si el backend de Django responde OK, navegamos a bienvenida
+        
+        const respuesta = await Login(data);
+        
+        const idUsuario = respuesta?.data?.usuario_id || respuesta?.usuario_id;
+
+        if (idUsuario) {
+          localStorage.setItem("usuario_id", idUsuario);
+        }
+
         navigate("/bienvenida");
       } catch (e) {
-        throw e; // El toast capturará este error
+        throw e; 
       }
     };
 
@@ -66,7 +72,7 @@ const Logi = ({ setAx, ax }) => {
         <p className="text-slate-500">¿Nuevo por aquí?</p>
         <button
           className="text-green-800 font-black hover:underline transition-all cursor-pointer"
-          onClick={() => setAx(!ax)} // Esto vuelve a funcionar como antes
+          onClick={() => setAx(!ax)} 
         >
           Crear cuenta Tuke
         </button>
