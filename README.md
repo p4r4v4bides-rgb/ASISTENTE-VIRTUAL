@@ -4,23 +4,17 @@ mi gente peru, cuando descarguen o clonen el proyecto de GitHub, el programa no 
 
 Paso 1: Frontend
 Para instalar los modulos del frond
-
 cd Frontend
-
 npm install
 
 Paso 2: Backend
 En esa misma terminal (asegúrense de haber vuelto a la carpeta ASISTENTE-VIRTUAL), vamos a crear el entorno virtual de Python y a descargar las librerías
-
 python -m venv venv
-
-venv\Scripts\activate
-
+.\venv\Scripts\activate
 pip install -r requirements.txt
 
-Paso 3: Crear Usuario de Admin para la base de datos
+Paso 3:
 
 python manage.py migrate
-
 python manage.py createsuperuser
 
