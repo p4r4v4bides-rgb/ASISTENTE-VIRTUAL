@@ -108,7 +108,7 @@ class animalitoApp(QWidget):
             "¡Hola! ¿Qué investigamos hoy?",
             "Recuerda tomar un poco de agua",
             "Tengo los ojos en tus tareas...",
-            "Me pregunto de qué color me pondré hoy",
+            "Me pregunto de qué color me pondré hoy, bueno de ninguno, aún no me dan esa actualización",
             "Sigue así, vas por buen camino",
             "Shhh... estoy concentrado",
             "E=mc², pero yo soy más de E=tuKe²",
@@ -175,6 +175,8 @@ class animalitoApp(QWidget):
         self.move(int(self.pos_x), int(self.pos_y))
         
         self.show()
+        self.raise_()
+        self.activateWindow()   
         
         self.vel_x = 30 
         self.vel_y = 0
@@ -184,17 +186,16 @@ class animalitoApp(QWidget):
         self.actualizar_mirada() 
         
         QTimer.singleShot(1000, self.saludar_llegada)
-
+        
     def saludar_llegada(self):
         self.decir_mensaje_custom("¡Zzz... Ah! ¡Hola! Ya estoy aquí.")
     
     def verificar_sonido(self, texto):
         texto_min = texto.lower()
-        # Si encuentra alguna de las onomatopeyas en el texto, reproduce el audio
+
         if "tchi-tchi-tchi" in texto_min or "que-que-que" in texto_min or "ck-ck-ck" in texto_min:
-            # Asegúrate de que el archivo 'onomatopeya.m4a' esté en la misma carpeta que tu script
             ruta_audio = ruta_recurso("extras/onomatopeya.m4a") 
-            self.reproductor.setSource(QUrl.fileURLWithPath(ruta_audio))
+            self.reproductor.setSource(QUrl.fromLocalFile(ruta_audio))
             self.reproductor.play()
 
     def decir_mensaje_custom(self, texto):
@@ -338,7 +339,11 @@ class animalitoApp(QWidget):
         self.vel_y = 0
         self.timer_decision.stop() 
         self.timer_animacion.setInterval(250) 
+        
         frase_elegida = random.choice(self.frases)
+        
+        self.verificar_sonido(frase_elegida) 
+        
         self.burbuja.mostrar_mensaje(frase_elegida, self.pos_x, self.pos_y, self.width(), self.height())
         tiempo_lectura = max(4500, len(frase_elegida) * 100) 
         self.timer_habla.start(int(tiempo_lectura))
@@ -467,7 +472,7 @@ def iniciar_habla(self):
         
         frase_elegida = random.choice(self.frases)
         
-        self.verificar_sonido(frase_elegida) # <-- AÑADIMOS EL DETECTOR AQUÍ
+        self.verificar_sonido(frase_elegida)
         
         self.burbuja.mostrar_mensaje(frase_elegida, self.pos_x, self.pos_y, self.width(), self.height())
         tiempo_lectura = max(4500, len(frase_elegida) * 100) 
