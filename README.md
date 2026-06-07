@@ -9,6 +9,8 @@ cd Frontend
 
 npm install
 
+exit
+
 Paso 2: Backend
 En esa misma terminal (asegúrense de haber vuelto a la carpeta ASISTENTE-VIRTUAL), vamos a crear el entorno virtual de Python y a descargar las librerías
 
@@ -23,4 +25,6 @@ Paso 3: Crear Usuario de Admin para la base de datos
 python manage.py migrate
 
 python manage.py createsuperuser
+
+
 
